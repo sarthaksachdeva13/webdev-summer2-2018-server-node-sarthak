@@ -24,5 +24,7 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/webdev-summer2-mongo');
 
 require('./services/user.service.server')(app);
+require('./services/section.service.server')(app);
+
 
 app.listen(3000);
