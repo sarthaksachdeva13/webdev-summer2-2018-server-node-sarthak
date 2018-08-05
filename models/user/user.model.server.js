@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const userSchema = require('./user.schema.server');
-
 const userModel = mongoose.model('UserModel', userSchema);
 
 findAllUsers = () =>
@@ -9,18 +8,42 @@ findAllUsers = () =>
 findUserByCredentials = (username, password) =>
     userModel.findOne({username: username, password: password});
 
-// findUserById = userId =>
-//     userModel.findById(userId)
-//
-// findUserByIdExpanded = userId =>
-//     userModel
-//         .findById(userId)
-//         .populate('sections')
-//         .exec()
+findUserById = userId =>
+    userModel.findById(userId);
+
+createUser = user =>
+    userModel.create(user);
+
+findUserByUsername = username =>
+    userModel.find({username: username});
+
+validateUsername = (username) =>
+    userModel.find({username: username}).count();
+
+
+updateUser = (currentUser, user) => {
+    return userModel.updateOne({
+        _id: currentUser._id
+    }, {
+        $set: {
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            phone: user.phone,
+            address: user.address,
+            email: user.email
+        }
+    })
+
+};
+
 
 module.exports = {
-    // findUserByIdExpanded,
-    // findUserById,
+    findUserByUsername,
+    createUser,
+    updateUser,
+    validateUsername,
+    findUserById,
     findAllUsers,
     findUserByCredentials
 };
