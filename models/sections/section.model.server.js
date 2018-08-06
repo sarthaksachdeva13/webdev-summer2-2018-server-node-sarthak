@@ -39,15 +39,15 @@ enroll = (userId, sectionId) =>
         });
 
 decreaseNoOfSeats = sectionId =>
-    sectionModel.update({_id: sectionId}, {$inc: {availableSeats: -1}});
+    sectionModel.update({_id: sectionId},
+        {$inc: {availableSeats: -1}});
 
 increaseNoOfSeats = sectionId =>
-    sectionModel.update({_id: sectionId}, {$inc: {availableSeats: +1}});
+    sectionModel.update({_id: sectionId},
+        {$inc: {availableSeats: +1}});
 
 
 module.exports = {
-    enroll,
-    findAllSections,
     findAllSectionsForCourse,
     createSection,
     findSectionById,

@@ -26,22 +26,6 @@ app.use(session({
 }));
 
 
-app.get('/api/session/set/:name/:value', setSession);
-app.get('/api/session/get/:name', getSession);
-
-function setSession(req, res) {
-    const name = req.params['name'];
-    req.session[name] = req.params['value'];
-    res.send(req.session);
-}
-
-function getSession(req, res) {
-    const name = req.params['name'];
-    const value = req.session[name];
-    res.send(value);
-}
-
-
 require('./services/user.service.server')(app);
 require('./services/section.service.server')(app);
 

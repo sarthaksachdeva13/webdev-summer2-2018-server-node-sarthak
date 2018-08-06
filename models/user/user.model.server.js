@@ -5,7 +5,6 @@ const userModel = mongoose.model('UserModel', userSchema);
 findAllUsers = () =>
     userModel.find();
 
-
 findUserByCredentials = credentials =>
     userModel.findOne(credentials, {username: 1});
 

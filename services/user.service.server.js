@@ -2,28 +2,29 @@ module.exports = app => {
 
     const userModel = require('../models/user/user.model.server');
 
+
     findAllUsers = (req, res) =>
         userModel.findAllUsers()
-            .then(users => {
-                res.send(users);
-            });
+            .then(users => res.send(users));
 
     login = (req, res) => {
-        const credentials = req.body;
-        userModel.findUserByCredentials(credentials)
+        let credentials = req.body;
+        userModel
+            .findUserByCredentials(credentials)
             .then(user => {
+                if (user === null) {
+                    res.send({errorMsg: "Sorry, you aren't registered yet!"});
+                } else {
                     req.session['currentUser'] = user;
                     res.json(user);
                 }
-            );
+            })
     };
 
     profile = (req, res) => {
         const user = req.session['currentUser'];
         userModel.findUserByUsername(user.username)
-            .then(u => {
-                res.json(u);
-            })
+            .then(u => res.json(u))
     };
 
     logout = (req, res) => {
@@ -32,26 +33,23 @@ module.exports = app => {
     };
 
     findUserById = (req, res) => {
-        const id = req.params['userId'];
-        userModel.findUserById(id)
-            .then(user => {
-                res.json(user);
-            })
+        userModel.findUserById(req.params['userId'])
+            .then(user => res.json(user))
     };
 
 
     authenticate = (req, res) => {
-        const currentUser = req.session.currentUser;
+        let currentUser = req.session.currentUser;
         if (currentUser !== undefined) {
             res.json({username: currentUser.username});
         } else {
-            res.status(500);
+            res.json({username: ''});
         }
     };
 
     update = (req, res) => {
-        const user = req.body;
-        const currentUser = req.session.currentUser;
+        let user = req.body;
+        let currentUser = req.session.currentUser;
         if (currentUser._id !== undefined) {
             userModel.updateUser(currentUser, user)
                 .then(obj => {
@@ -60,7 +58,7 @@ module.exports = app => {
                     res.json(user);
                 })
         }
-    }
+    };
 
 
     createUser = (req, res) => {

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var enrollmentSchema = mongoose.Schema({
+module.exports = mongoose.Schema({
     section: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'SectionModel'
@@ -11,5 +11,3 @@ var enrollmentSchema = mongoose.Schema({
     },
     grade: String
 }, {collection: 'enrollments'});
-
-module.exports = enrollmentSchema;
