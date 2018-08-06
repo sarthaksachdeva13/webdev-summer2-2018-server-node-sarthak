@@ -9,11 +9,11 @@ module.exports = app => {
             });
 
     login = (req, res) => {
-        const user = req.body;
-        userModel.findUserByCredentials(user.username, user.password)
+        const credentials = req.body;
+        userModel.findUserByCredentials(credentials)
             .then(user => {
                 req.session['currentUser'] = user;
-                res.send(req.session['currentUser']);
+                res.json(user);
             });
     };
 
@@ -59,7 +59,7 @@ module.exports = app => {
                     res.json(user);
                 })
         }
-    };
+    }
 
 
     createUser = (req, res) => {

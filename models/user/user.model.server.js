@@ -17,12 +17,12 @@ createUser = user =>
 findUserByUsername = username =>
     userModel.find({username: username});
 
-validateUsername = (username) =>
+validateUsername = username =>
     userModel.find({username: username}).count();
 
 
-updateUser = (currentUser, user) => {
-    return userModel.updateOne({
+updateUser = (currentUser, user) =>
+    userModel.updateOne({
         _id: currentUser._id
     }, {
         $set: {
@@ -33,9 +33,7 @@ updateUser = (currentUser, user) => {
             address: user.address,
             email: user.email
         }
-    })
-
-};
+    });
 
 
 module.exports = {

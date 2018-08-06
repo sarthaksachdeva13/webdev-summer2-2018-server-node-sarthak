@@ -1,7 +1,9 @@
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
 
 module.exports = mongoose.Schema({
-    title: String,
-    courseId: String,
-
+    name: String,
+    seats: Number,
+    courseId: Number,
+    students: [String],
+    availableSeats: Number
 }, {collection: 'section'});

@@ -8,5 +8,5 @@ module.exports = mongoose.Schema({
     email: String,
     address: String,
     phone: String,
-    sections : [{type : mongoose.Schema.Types.ObjectId, ref : 'SectionModel'}]
+    sections : [String]
 }, {collection: 'user'});
