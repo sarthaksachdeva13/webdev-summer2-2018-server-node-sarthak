@@ -38,10 +38,10 @@ enroll = (userId, sectionId) =>
             return user.save();
         });
 
-decrementSectionSeats = (sectionId) =>
+decreaseNoOfSeats = sectionId =>
     sectionModel.update({_id: sectionId}, {$inc: {availableSeats: -1}});
 
-incrementSectionSeats = (sectionId) =>
+increaseNoOfSeats = sectionId =>
     sectionModel.update({_id: sectionId}, {$inc: {availableSeats: +1}});
 
 
@@ -53,6 +53,6 @@ module.exports = {
     findSectionById,
     deleteSection,
     updateSection,
-    decrementSectionSeats,
-    incrementSectionSeats
+    decreaseNoOfSeats,
+    increaseNoOfSeats
 };

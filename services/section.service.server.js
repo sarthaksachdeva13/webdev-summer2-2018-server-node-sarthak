@@ -1,28 +1,100 @@
 module.exports = app => {
-    const sectionModel = require('../models/sections/section.model.server');
 
-    app.put('/api/section/:sectionId/enroll', (req, res) => {
-        const currentUser = req.session['currentUser'];
-        sectionModel
-            .enroll(currentUser._id, req.params['sectionId'])
-            .then(status => res.sendStatus(200))
-    });
+    let sectionModel = require('../models/sections/section.model.server');
+    let enrollmentModel = require('../models/enrollment/enrollment.model.server');
 
-    app.get('/api/section', (req, res) =>
-        sectionModel
-            .findAllSections()
-            .then(sections  => res.send(sections))
-    );
+    deleteSection = (req, res) => {
+        let sectionId = req.params.sectionId;
+        let currentUser = req.session.currentUser;
+        let studentId = currentUser._id;
+        enrollmentModel.deleteEnrollment(sectionId, studentId)
+            .then(function () {
+                sectionModel.deleteSection(sectionId)
+                    .then(obj => res.sendStatus(200))
+            })
+    };
 
-    app.get('/api/course/:courseId/section', (req, res) =>
-        sectionModel
-            .findAllSectionsForCourse(req.params['courseId'])
-            .then(sections => res.send(sections))
-    );
+    deregisterStudentInSection = (req, res) => {
+        let sectionId = req.params['sectionId'];
+        let currentUser = req.session.currentUser;
+        if (currentUser !== undefined) {
+            var studentId = currentUser._id;
+            sectionModel.increaseNoOfSeats(sectionId)
+                .then(() => {
+                    enrollmentModel.deleteEnrollment(sectionId, studentId)
+                        .then(function (obj) {
+                            if (obj.n > 0) {
+                                res.sendStatus(200);
+                            }
+                        })
+                })
+        } else {
+            res.sendStatus(500);
+        }
+    };
 
-    app.post('/api/section', (req, res) =>
-        sectionModel
-            .createSection(req.body)
-            .then(section => res.send(section))
-    )
+    updateSection = (req, res) => {
+        let newSection = req.body;
+        let sectionId = req.params.sectionId;
+        sectionModel.findSectionById(sectionId)
+            .then(function (object) {
+                let currentSection = object._doc;
+                newSection.availableSeats = currentSection.availableSeats +
+                    (newSection.seats - currentSection.seats);
+                sectionModel.updateSection(newSection, sectionId)
+                    .then(obj =>
+                        res.json(newSection)
+                    )
+            })
+
+    };
+
+    function findSectionsForStudent(req, res) {
+        var currentUser = req.session.currentUser;
+        var studentId = currentUser._id;
+        if (currentUser !== undefined) {
+            enrollmentModel
+                .findSectionsForStudent(studentId)
+                .then(enrollments => res.json(enrollments));
+        }
+    }
+
+
+    enrollStudentInSection = (req, res) => {
+        let sectionId = req.params.sectionId;
+        let currentUser = req.session.currentUser;
+        if (currentUser !== undefined) {
+            let studentId = currentUser._id;
+            let enrollment = {
+                student: studentId,
+                section: sectionId
+            };
+            sectionModel
+                .decreaseNoOfSeats(sectionId)
+                .then(() => enrollmentModel.enrollStudentInSection(enrollment))
+                .then(enrollment => res.json(enrollment))
+        } else {
+            res.sendStatus(500);
+        }
+    };
+
+    findSectionsForCourse = (req, res) => {
+        let courseId = req.params['courseId'];
+        sectionModel.findSectionsForCourse(courseId)
+            .then(sections => res.json(sections))
+    };
+
+    createSection = (req, res) => {
+        let section = req.body;
+        sectionModel.createSection(section)
+            .then(section => res.json(section))
+    };
+
+    app.post('/api/course/:courseId/section', createSection);
+    app.get('/api/course/:courseId/section', findSectionsForCourse);
+    app.post('/api/section/:sectionId/enrollment', enrollStudentInSection);
+    app.get('/api/student/section', findSectionsForStudent);
+    app.put('/api/course/:courseId/section/:sectionId/update', updateSection);
+    app.delete('/api/section/:sectionId/delete', deleteSection);
+    app.delete('/api/section/:sectionId/deregister', deregisterStudentInSection);
 };

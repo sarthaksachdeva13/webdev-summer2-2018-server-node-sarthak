@@ -12,13 +12,14 @@ module.exports = app => {
         const credentials = req.body;
         userModel.findUserByCredentials(credentials)
             .then(user => {
-                req.session['currentUser'] = user;
-                res.json(user);
-            });
+                    req.session['currentUser'] = user;
+                    res.json(user);
+                }
+            );
     };
 
     profile = (req, res) => {
-        let user = req.session['currentUser'];
+        const user = req.session['currentUser'];
         userModel.findUserByUsername(user.username)
             .then(u => {
                 res.json(u);
@@ -27,7 +28,7 @@ module.exports = app => {
 
     logout = (req, res) => {
         req.session.destroy();
-        res.send(200);
+        res.sendStatus(200);
     };
 
     findUserById = (req, res) => {
@@ -44,7 +45,7 @@ module.exports = app => {
         if (currentUser !== undefined) {
             res.json({username: currentUser.username});
         } else {
-            res.json({username: ''});
+            res.status(500);
         }
     };
 
