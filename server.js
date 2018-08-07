@@ -4,8 +4,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/webdev-summer2-mongo');
-
+mongoose.connect('mongodb://sarthaksachdeva:webdevsummer2@ds147589.mlab.com:47589/webdev_summer2_mongo');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -30,4 +29,4 @@ require('./services/user.service.server')(app);
 require('./services/section.service.server')(app);
 
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);

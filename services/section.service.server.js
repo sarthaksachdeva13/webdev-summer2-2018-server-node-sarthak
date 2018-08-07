@@ -52,7 +52,9 @@ module.exports = app => {
         if (currentUser !== undefined) {
             enrollmentModel
                 .findSectionsForStudent(studentId)
-                .then(enrollments => res.json(enrollments));
+                .then(enrollments => {
+                    res.json(enrollments);
+                });
         }
     };
 
