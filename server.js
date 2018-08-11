@@ -11,7 +11,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "https://sarthakangular.herokuapp.com");
+    // res.header("Access-Control-Allow-Origin", "https://sarthakangular.herokuapp.com");
+    res.header("Access-Control-Allow-Origin", "http://localhost:4200");
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -21,12 +22,15 @@ app.use(function (req, res, next) {
 app.use(session({
     resave: false,
     saveUninitialized: true,
-    secret: 'any string'
+    secret: 'any string',
+    cookie:{maxAge:1800000}
 }));
 
 
 require('./services/user.service.server')(app);
 require('./services/section.service.server')(app);
+require('./services/quiz.service.server')(app);
+require('./services/submission.service.server')(app);
 
 
 app.listen(process.env.PORT || 3000);

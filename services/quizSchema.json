@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "123",
+    "name": "Quiz 1",
+    "questions": [
+      {"type": "fillInTheBlanks", "_id": "111"},
+      {"type": "trueOrFalse", "_id": "222"},
+      {"type": "multipleChoice", "_id": "333"},
+      {"type": "essay", "_id": "444"}
+    ]
+  },
+  {"_id": "234", "name": "Quiz 2"},
+  {"_id": "345", "name": "Quiz 3"},
+  {"_id": "456", "name": "Quiz 4"},
+  {"_id": "567", "name": "Quiz 5"}
+]
