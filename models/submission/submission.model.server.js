@@ -1,40 +1,80 @@
-var mongoose = require('mongoose');
-var submissionSchema = require('./submission.schema.server');
-var submissionModel = mongoose.model('SubmissionModel', submissionSchema
-);
+const mongoose = require('mongoose');
+let submissionSchema = require('./submission.schema.server');
+let submissionModel = mongoose.model('SubmissionModel', submissionSchema);
 
-findSubmissionsForQuiz = quizId =>
-    submissionModel.find({quizId: quizId});
 
-findSubmissionsForUser = username =>
-    submissionModel.find({username: username});
+createSubmission = (quiz, student) => {
 
-submitQuiz = (submission, quizId, username) =>
-    submissionModel.create({
-        quizId: quizId,
-        username: username,
-        answers: submission
+    let answers = [];
+
+    quiz.questions.forEach(question => {
+        switch (question.questionType) {
+            case 'ESSAY':
+                answers.push({
+                    title: question.title,
+                    points: question.points,
+                    description: question.description,
+                    choices: question.choices,
+                    blanks: question.blanks,
+                    questionType: question.questionType,
+                    essayAnswer: question.essayAnswer
+                });
+                break;
+            case 'FILL_BLANKS':
+                answers.push({
+                    title: question.title,
+                    points: question.points,
+                    description: question.description,
+                    choices: question.choices,
+                    blanks: question.blanks,
+                    questionType: question.questionType,
+                    fillBlanksAnswers: question.fillBlanksAnswers
+                });
+                break;
+            case 'TRUE_FALSE':
+                answers.push({
+                    title: question.title,
+                    points: question.points,
+                    description: question.description,
+                    choices: question.choices,
+                    blanks: question.blanks,
+                    questionType: question.questionType,
+                    trueFalseAnswer: question.trueFalseAnswer
+                });
+                break;
+            case 'CHOICE':
+                answers.push({
+                    title: question.title,
+                    points: question.points,
+                    description: question.description,
+                    choices: question.choices,
+                    blanks: question.blanks,
+                    questionType: question.questionType,
+                    multipleChoiceAnswer: question.multipleChoiceAnswer
+                });
+                break
+        }
     });
+    let submission = {
+        quiz: quiz,
+        student: student,
+        submissionTime: new Date(),
+        answers: answers
+    };
+    return submissionModel.create(submission)
+};
 
-findQuizSubmissionsByStudent = (quizId, student) =>
-    submissionModel.find({quizId: quizId, username: student});
+findSubmissions = (qID, studentId) =>
+    submissionModel.find({quiz: qID, student: studentId});
 
+findSubmission = (submissionId, studentId) =>
+    submissionModel.findOne({_id: submissionId, student: studentId})
+        .populate('quiz')
+        .exec();
 
-findSubmissionById = (studentId, submissionId) =>
-    submissionModel.find({username: studentId, _id: submissionId});
-
-
-findSubmission = (submissionId, quizId) =>
-    submissionModel.findOne({
-        _id: submissionId,
-        quizId: quizId
-    });
 
 module.exports = {
-    submitQuiz,
-    findSubmissionsForQuiz,
-    findSubmissionsForUser,
-    findSubmissionById,
-    findQuizSubmissionsByStudent,
+    createSubmission,
+    findSubmissions,
     findSubmission
-};
+}
