@@ -1,40 +1,19 @@
-module.exports = function (app) {
+module.exports = app => {
 
-
-    let quizzes = require('./quizSchema.json');
-    let submissionModel = require('../models/submission/submission.model.server');
-
-    findQuizById = (req, res) => {
-        let quiz = quizzes.filter(q =>
-            q._id === req.params.quizId);
-        res.json(quiz[0]);
-    };
+    let quizModel = require('../models/quiz/quiz.model.server');
 
     findAllQuizzes = (req, res) =>
-        res.json(quizzes);
+        quizModel.findAllQuizzes()
+            .then(quizzes => res.json(quizzes));
 
 
-    findSubmissionsForQuiz = (req, res) =>
-        submissionModel.findSubmissionsForQuiz(req.params.quizId)
-            .then(function (submissions) {
-                res.json(submissions);
-            });
-
-    submitQuiz = (req, res) => {
-        let submission = req.body;
-        let quizId = req.params.quizId;
-        let currentUser = req.session.currentUser.username;
-        submissionModel
-            .submitQuiz(submission, quizId, currentUser)
-            .then(function (submission) {
-                res.json(submission);
-            })
-    };
+    findQuizById = (req, res) =>
+        quizModel.findQuizById(req.params['quizId'])
+            .then(quizzes => res.json(quizzes));
 
 
     app.get('/api/quiz', findAllQuizzes);
-    app.get('/api/quiz/:qID', findQuizById);
-    app.post('/api/quiz/:qID', submitQuiz);
-    app.get('/api/quiz/:qID/submissions', findSubmissionsForQuiz);
+    app.get('/api/quiz/:quizId', findQuizById);
 
 };
+
