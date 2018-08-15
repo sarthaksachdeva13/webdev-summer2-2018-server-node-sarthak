@@ -2,9 +2,9 @@ module.exports = app => {
     let submissionModel = require('../models/submission/submission.model.server');
 
     submitQuiz = (req, res) => {
-        let submission = req.body;
+
         let currentUser = req.session['currentUser'];
-        submissionModel.createSubmission(submission, currentUser)
+        submissionModel.createSubmission(req.body, req.session['currentUser'])
             .then(submission => res.json(submission))
     };
 

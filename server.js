@@ -5,10 +5,14 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 mongoose.connect('mongodb://sarthaksachdeva:webdevsummer2@ds147589.mlab.com:47589/webdev_summer2_mongo');
+// mongoose.connect('mongodb://localhost/webdev-summer2-mongo');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+
+app.get('/', (req, res) =>
+    res.send('Hello World'));
 
 app.use(function (req, res, next) {
     // res.header("Access-Control-Allow-Origin", "https://sarthakangular.herokuapp.com");
@@ -23,7 +27,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     secret: 'any string',
-    cookie:{maxAge:1800000}
+    maxAge: Date.now() + (30 * 1800000),
 }));
 
 
@@ -34,3 +38,4 @@ require('./services/submission.service.server')(app);
 
 
 app.listen(process.env.PORT || 3000);
+

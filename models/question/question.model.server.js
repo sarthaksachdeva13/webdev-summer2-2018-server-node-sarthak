@@ -11,8 +11,12 @@ findAllQuestions = () =>
 findQuestionById = questionID =>
     questionModel.findOne({_id: questionId});
 
+createQuestion = question =>
+    questionModel.create(question)
+
 
 module.exports = {
     findAllQuestions,
-    findQuestionById
+    findQuestionById,
+    createQuestion
 };

@@ -11,7 +11,23 @@ findQuizById = qID =>
         .populate('questions')
         .exec();
 
+createQuiz = quiz =>
+    quizModel.create(quiz);
+
+updateQuiz = (quizId, newQuiz) =>
+    quizModel.update({_id: quizId}, {
+        $set: newQuiz
+    });
+
+addQuestion = (quizId, questionId) =>
+    quizModel.update({_id: quizId}, {
+        $push: {questions: questionId}
+    });
+
 module.exports = {
     findAllQuizzes,
+    createQuiz,
+    updateQuiz,
+    addQuestion,
     findQuizById
 };
