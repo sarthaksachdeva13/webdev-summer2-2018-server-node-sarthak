@@ -1,45 +1,32 @@
-module.exports = function (app) {
-
-
+module.exports = app => {
     let submissionModel = require('../models/submission/submission.model.server');
 
-    createSubmission = (req, res) => {
-        let quizId = req.params.quizId;
-        let studentId = req.params['studentId'];
+    submitQuiz = (req, res) => {
         let submission = req.body;
-        submissionModel
-            .submitQuiz(submission, quizId, studentId)
-            .then(submission => res.json(submission));
+        let currentUser = req.session['currentUser'];
+        submissionModel.createSubmission(submission, currentUser)
+            .then(submission => res.json(submission))
     };
 
-    getSubmissionById = (req, res) => {
-        let quizId = req.params.quizId;
-        let studentId = req.params['studentId'];
+    findSubmissions = (req, res) => {
+        let quizId = req.params['quizId'];
+        let currentUser = req.session['currentUser'];
+        submissionModel.findSubmissions(quizId, currentUser)
+            .then(submission => res.json(submission))
+
+    };
+
+    findSubmission = (req, res) => {
         let submissionId = req.params['submissionId'];
-        submissionModel
-            .findSubmissionById(studentId, submissionId)
-            .then(submission => res.json(submission));
-    };
+        let currentUser = req.session['currentUser'];
+        submissionModel.findSubmission(submissionId, currentUser)
+            .then(submission => res.json(submission))
 
-    getSubmissionsByStudentId = (req, res) => {
-        let quizId = req.params.quizId;
-        let studentId = req.params['studentId'];
-        submissionModel
-            .findQuizSubmissionsByStudent(quizId, studentId)
-            .then(submission => res.json(submission));
-    };
-
-    getSubmission = (req, res) => {
-        let quizId = req.params.quizId;
-        let submissionId = req.params['submissionId'];
-        submissionModel
-            .findSubmission(submissionId, quizId)
-            .then(submission => res.json(submission));
     };
 
 
-    app.post('/api/quiz/:qID/student/:studentId/submission', createSubmission);
-    app.get('/api/quiz/:qID/student/:studentId/submission', getSubmissionsByStudentId);
-    app.get('/api/quiz/:qID/student/:studentId/submission/:submissionId', getSubmissionById);
-    app.get('/api/quiz/:qID/submission/:submissionId', getSubmission);
-}
+    app.post('/api/quiz/:quizId/submission', submitQuiz);
+    app.get('/api/quiz/:quizId/submission', findSubmissions);
+    app.get('/api/quiz/:quizId/submission/:submissionId', findSubmission);
+};
+
